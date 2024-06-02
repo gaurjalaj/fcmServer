@@ -20,6 +20,7 @@ router.get('/', function (req, res, next) {
 
 router.post('/notification/sendViaFcm', (req, res) => {
   const { deviceFcmToken, dataToBeSend } = req.body;
+  if(!deviceFcmToken || !dataToBeSend) res.status(400).json({error: "deviceFcmToken or dataToBeSend can not be null"})
   
   const data = {
     message: {
@@ -28,7 +29,7 @@ router.post('/notification/sendViaFcm', (req, res) => {
       //   title: "Notification Title",
       //   body: "Notification Body ",
       // },
-      data: dataToBeSend
+      data: {...dataToBeSend, notificationId: Date.now().toString()}
     },
   };
 
@@ -42,9 +43,9 @@ router.post('/notification/sendViaFcm', (req, res) => {
 
 })
 
-router.get('/acknowlege', (req, res) => {
-  console.log("Acknowledged on server");
-  res.sendStatus(200);
+router.get('/acknowlege/:notificationId', (req, res) => {
+  console.log("Acknowledged on server: ", req.params.notificationId);
+  res.status(200).json({message: "Successfully acknowledged id: " + req.params.notificationId});
 })
 
 
